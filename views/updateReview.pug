@@ -1,0 +1,17 @@
+extends base
+
+block content
+    main.main
+        .user-hide= user
+        .review-form
+            h2.heading-secondary.ma-bt-lg.header-review= `Review about ${review.tour.name}`
+            form.form.form--review
+                .form__group
+                    label.form__label(for='review') Write a review
+                    textarea#review.form__input(required rows='5')=`${review.review}` 
+                .form__group.ma-bt-md
+                    label.form__label(for='rating') Rating
+                    input#rating.form__input(type='number', required, min='0', max='5', step='0.1', value=`${review.rating}`)
+                .form__group
+                    button.btn.btn--green.update-review(data-review-id=`${review.id}`) Edit Review 
+                    button.btn.btn--green.delete-review(data-review-id=`${review.id}`) delete Review

@@ -1,0 +1,81 @@
+extends base
+
+block content
+    main.main-dashboard 
+        .user-hide= user
+        .container-dashboard
+            h1.h1-dashboard= title
+            - var sectionName= section.charAt(0).toUpperCase() + section.slice(1).toLowerCase()
+            a.btn-new-user(href=`/add/${section}`)= `+ New ${sectionName}`
+
+        table
+            thead
+                tr
+                    if section === 'user'
+                        th ID
+                        th First Name
+                        th Email
+                        th Type
+                    else if section === 'tour'
+                        th ID
+                        th Name
+                        th.summary-column Summary
+                        th Duration(Days)
+                        th Max Group Size
+                        th Price
+                    else if section === 'review'
+                        th ID
+                        th.review-column Review
+                        th Rating
+                        th Tour Name
+                        th User Name
+                    else if section === 'booking'
+                        th ID
+                        th User Name
+                        th Tour Name
+                        th Date
+                        th Number Of Tickets
+                        th Total Price
+                    th Action 
+
+            tbody
+                each item in data
+                    tr
+                        if section === 'user'
+                            td= item.id
+                            td= item.name
+                            td= item.email
+                            td= item.role
+                        else if section === 'tour'
+                            td= item.id
+                            td= item.name
+                            td= item.summary
+                            td= item.duration
+                            td= item.maxGroupSize
+                            td= item.price
+                        else if section === 'review'
+                            td= item.id
+                            td= item.review
+                            td= item.rating
+                            td= item.tour.name
+                            td= item.user.name
+                        else if section === 'booking'
+                            td= item.id
+                            td= item.user.name
+                            td= item.tour.name
+                            - const date = item.tourDate.toLocaleString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})
+                            td= date
+                            td= item.numbersOfPeople
+                            td= item.price
+
+                        td 
+                            a.btn.btn-dashboard.view(href=`/view/${section}/${item.id}`) 
+                                svg.dashboard__icon
+                                    use(xlink:href='/img/icons.svg#icon-eye')
+                            a.btn.btn-dashboard.edit(href=`/update/${section}/${item.id}`)
+                                svg.dashboard__icon
+                                    use(xlink:href='/img/icons.svg#icon-edit')
+                            a.btn.btn-dashboard.delete-item(data-id=`${item.id}` data-section=`${section}`)
+                                svg.dashboard__icon
+                                    use(xlink:href='/img/icons.svg#icon-delete')
+

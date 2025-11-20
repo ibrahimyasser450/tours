@@ -1,0 +1,31 @@
+extends base
+
+block content
+    main.main
+        .signup-form
+            h2.heading-secondary.ma-bt-lg Create new account
+            form.form.form--signup
+                .form__group
+                    label.form__label(for='name') Name
+                    input#name.form__input(type='text', placeholder='Your full name', required)
+                    p#name-error.form__error-message 
+                .form__group.ma-bt-md
+                    label.form__label(for='email') Email address
+                    input#email.form__input(type='email', placeholder='you@example.com', required)
+                    p#email-error.form__error-message 
+                .form__group.ma-bt-md
+                    label.form__label(for='password') Password
+                    input#password.form__input(type='password', placeholder='••••••••', minlength='8', required)
+                    p#password-error.form__error-message 
+                .form__group.ma-bt-md
+                    label.form__label(for='password-confirm') Password Confirm
+                    input#password-confirm.form__input(type='password', placeholder='••••••••', minlength='8', required)
+                    p#password-confirm-error.form__error-message 
+                .form__group.ma-bt-md 
+                    label.form__label(for="role") Department:
+                    select#role.form__input(name="role")
+                        option(value="user", selected) User
+                        option(value="lead-guide") Lead guide
+                        option(value="guide") Guide
+                .form__group
+                    button.btn.btn--green Sign up

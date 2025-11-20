@@ -1,0 +1,61 @@
+extends base
+
+block content
+    main.main
+        .user-hide= user 
+        .card-container
+            each booking in bookings
+                .card
+                    .card__header
+                        .card__picture
+                            .card__picture-overlay &nbsp;
+                            img.card__picture-img(src=`/img/tours/${booking.tour.imageCover}`, alt=`${booking.tour.name}`)
+                        h3.heading-tertirary
+                            span= booking.tour.name
+
+                    .card__details
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-clock')
+                            h4.card__sub-heading= `${booking.tour.duration}-days`
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-map-pin')
+                            span= booking.tour.startLocation.description
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-calendar')
+                            span= new Date(booking.tourDate).toLocaleString('en-GB', {day: 'numeric', month: 'long'})
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-dollar-sign')
+                            span= `${booking.tour.price} $ per person`
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-user')
+                            span= `${booking.tour.maxGroupSize} people`
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-star')
+                            span= `${booking.tour.ratingsAverage} / 5 rating`
+
+                    .card__footer.booking-info
+                        h3.heading-secondary-booking Booking Information  
+                        .booking-details
+                            p
+                                svg.card__icon
+                                    use(xlink:href='/img/icons.svg#icon-tag')
+                                span.card__footer-value= `${booking.numbersOfPeople} `
+                                span.card__footer-text Tickets booked
+                            p
+                                svg.card__icon
+                                    use(xlink:href='/img/icons.svg#icon-dollar-sign')
+                                span.card__footer-value= `${booking.price}$ `
+                                span.card__footer-text Total Price
+                            p   
+                                - const bookedDate = new Date(booking.createdAt).toLocaleString('en-GB', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false}); 
+                                -// Use `true` for 12-hour format [am / pm]
+                                svg.card__icon
+                                    use(xlink:href='/img/icons.svg#icon-calendar')
+                                span.card__footer-value= `${bookedDate} `
+                                span.card__footer-text Booked Date

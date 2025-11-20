@@ -1,0 +1,120 @@
+extends base
+
+mixin overview(label, text, icon)
+    .overview-box__detail
+        svg.overview-box__icon
+            use(xlink:href=`/img/icons.svg#icon-${icon}`)
+        span.overview-box__label= label
+        span.overview-box__text= text
+
+block content
+    .user-container
+        .user-hide= user
+        .user-card
+            if section === 'user'
+                img.user-photo(src=`/img/users/${data.photo}`, alt=`${data.name}`)
+                h1.heading-primary.heading-view
+                    span= data.name
+                .overview-box__group
+                        //- - const date = data.createdAt.toLocaleString('en-GB', {day:'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
+                        +overview('ID', data.id, 'tag')
+                        +overview('Email', data.email, 'mail')
+                        +overview('Role', data.role, 'user')
+                        +overview('Email Confirmed', data.confirmedEmail ? 'Yes' : 'No', 'check-square')
+                        if(data.active)
+                            +overview('Active', 'Yes', 'user-check')
+                        else 
+                            +overview('Active', 'No', 'user-x')
+                        //- +overview('Created Date', date, 'calendar')
+                        .overview-box__detail.view-detail
+                            .favorite-tours-header
+                                svg.overview-box__icon.view-icon
+                                    use(xlink:href='/img/icons.svg#icon-heart')
+                                span.overview-box__label Favorite Tours
+                            if(data.favoriteTours.length)
+                                span.overview-box__text
+                                    ul.favorite-tours
+                                        each tour in data.favoriteTours
+                                            li 🏞️ Tour : #{tour.name}
+                            else 
+                                span.overview-box__text No favorite tours yet
+
+                a.btn.btn--green(href="/dashboard/users") ⬅ Back to Dashboard
+
+            else if section === 'tour'
+                img.user-photo(src=`/img/tours/${data.imageCover}`, alt=`${data.name}`)
+                h1.heading-primary.heading-view
+                    span= data.name
+                .overview-box__group
+                        - const date = data.createdAt.toLocaleString('en-GB', {day:'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
+                        - const tourDate = new Date(data.startDates[0].date).toLocaleString('en-GB', {day:'numeric', month: 'long'});
+                        +overview('ID', data.id, 'tag')
+                        +overview('Difficulty', data.difficulty, 'trending-up')
+                        +overview('Participants', `${data.maxGroupSize} people`, 'user')
+                        +overview('Rating', `${data.ratingsAverage} / 5`, 'star')
+                        +overview('Next date', tourDate, 'calendar')
+                        +overview('Price', data.price, 'dollar-sign')
+                        if(data.secretTour)
+                            +overview('Secret Tour', data.secretTour, 'eye-off')
+                        else 
+                            +overview('Secret Tour', data.secretTour, 'eye')
+                        +overview('Start Location', data.startLocation.description, 'map-pin')
+                        +overview('Created Date', date, 'calendar')
+                        .overview-box__detail.view-detail
+                            .favorite-tours-header
+                                svg.overview-box__icon.view-icon
+                                    use(xlink:href='/img/icons.svg#icon-book-open')
+                                span.overview-box__label Summary
+                            span.overview-box__text= data.summary
+
+                        .overview-box__detail.view-detail
+                            .favorite-tours-header
+                                svg.overview-box__icon.view-icon
+                                    use(xlink:href='/img/icons.svg#icon-users')
+                                span.overview-box__label Guides
+                            if(data.guides.length)
+                                span.overview-box__text
+                                    ul.favorite-tours
+                                        each guide in data.guides
+                                            li 🙎‍♂️ Guide : #{guide.user.name}
+                            else 
+                                span.overview-box__text No guides yet
+
+                a.btn.btn--green(href="/dashboard/tours") ⬅ Back to Dashboard
+
+            else if section === 'review'
+                img.user-photo(src=`/img/tours/${data.tour.imageCover}`, alt=`${data.tour.name}`)
+                h1.heading-primary.heading-view
+                    span= data.tour.name
+                .overview-box__group
+                        - const date = data.createdAt.toLocaleString('en-GB', {day:'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
+                        +overview('ID', data.id, 'tag')
+                        +overview('User Name', data.user.name, 'user')
+                        +overview('Email', data.user.email, 'mail')
+                        +overview('Created Date', date, 'calendar')
+                        +overview('Rating', `${data.rating} / 5`, 'star')
+                        .overview-box__detail.view-detail
+                            .favorite-tours-header
+                                svg.overview-box__icon.view-icon
+                                    use(xlink:href='/img/icons.svg#icon-book-open')
+                                span.overview-box__label Review
+                            span.overview-box__text= data.review
+                a.btn.btn--green(href="/dashboard/reviews") ⬅ Back to Dashboard
+            
+            else if section === 'booking'
+                img.user-photo(src=`/img/tours/${data.tour.imageCover}`, alt=`${data.tour.name}`)
+                h1.heading-primary.heading-view
+                    span= data.tour.name
+                .overview-box__group
+                        - const date = data.createdAt.toLocaleString('en-GB', {day:'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
+                        - const tourDateBooked = data.tourDate.toLocaleString('en-GB', {day:'numeric', month: 'long'});
+                        +overview('ID', data.id, 'tag')
+                        +overview('User Name', data.user.name, 'user')
+                        +overview('Email', data.user.email, 'mail')
+                        +overview('Created Date', date, 'calendar')
+                        +overview('Tour Date', tourDateBooked, 'calendar')
+                        +overview('Number Of Tickets', data.numbersOfPeople, 'tag')
+                        +overview('Total Price', data.price, 'dollar-sign')
+                        +overview('Paid', data.paid ? 'Yes' : 'No', 'check-square')
+                a.btn.btn--green(href="/dashboard/bookings") ⬅ Back to Dashboard
+

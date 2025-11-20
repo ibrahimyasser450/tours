@@ -1,0 +1,102 @@
+extends base
+
+block content
+    main.main
+        .user-hide= user
+        .signup-form
+            if section === 'user'
+                - const userName = data.name.split(" ").slice(0, 1);
+                h2.heading-secondary.ma-bt-lg= `Update ${userName}`
+                form.form.form--signup
+                    .form__group
+                        label.form__label(for='name') Name
+                        input#name.form__input(type='text', value=`${data.name}` required)
+                    .form__group.ma-bt-md 
+                        label.form__label(for="role") Department:
+                        select#role.form__input(name="role")
+                            option(value="user", selected=data.role === 'user') User
+                            option(value="lead-guide", selected=data.role === 'lead-guide') Lead guide
+                            option(value="guide", selected=data.role === 'guide') Guide
+                            option(value="admin", selected=data.role === 'admin') Admin
+                    .form__group.ma-bt-md
+                        .radio-container
+                            label.form__label Active:
+                            .radio-group
+                                label.radio-option
+                                    input(type="radio", name="active", value="true", checked=data.active === true)
+                                    | True
+                                label.radio-option
+                                    input(type="radio", name="active", value="false", checked=data.active === false)
+                                    | False
+                    .form__group
+                        button.btn.btn--green#update-section(data-id=`${data.id}` data-section=`${section}`)= `Update ${userName}`
+            if section  === 'tour' 
+                h2.heading-secondary.ma-bt-lg= `Update ${data.name}`
+                form.form.form--signup
+                    .form__group
+                        label.form__label(for='name') Tour name
+                        input#name.form__input(type='text', value=`${data.name}` required)
+                    .form__group.ma-bt-md 
+                        label.form__label(for='price') Price
+                        input#price.form__input(type='number', required, min='1', step='1', value=`${data.price}`)
+                    .form__group.ma-bt-md 
+                        label.form__label(for='duration') Duration
+                        input#duration.form__input(type='number', required, min='1', step='1', value=`${data.duration}`)
+                    .form__group.ma-bt-md 
+                        label.form__label(for='maxGroupSize') Max group size
+                        input#maxGroupSize.form__input(type='number', required, min='1', step='1', value=`${data.maxGroupSize}`)
+                    .form__group.ma-bt-md 
+                        label.form__label(for="difficulty") Difficulty:
+                        select#difficulty.form__input(name="difficulty")
+                            option(value="easy", selected=data.difficulty === 'easy') Easy
+                            option(value="medium", selected=data.difficulty === 'medium') Medium
+                            option(value="difficult", selected=data.difficulty === 'difficult') Difficult
+                    .form__group.ma-bt-md
+                        label.form__label(for='summary') Write a summary
+                        textarea#summary.form__input(required rows='3')=`${data.summary}`
+                    .form__group.ma-bt-md
+                        label.form__label(for='description') Write a description
+                        textarea#description.form__input(required rows='9')=`${data.description}`
+                    .form__group.form__photo-upload
+                            img.form__tour-imageCover(src=`/img/tours/${data.imageCover}`, alt='Tour image cover')
+                            input.form__upload(type='file', accept='image/*', id='imageCover', name='imageCover')
+                            label(for='imageCover') Choose new image cover
+                    .form__group.ma-bt-md
+                        .radio-container
+                            label.form__label Secret Tour:
+                            .radio-group
+                                label.radio-option
+                                    input(type="radio", name="secretTour", value="true", checked=data.secretTour === true)
+                                    | True
+                                label.radio-option
+                                    input(type="radio", name="secretTour", value="false", checked=data.secretTour === false)
+                                    | False
+                    .form__group
+                        button.btn.btn--green#update-section(data-id=`${data.id}` data-section=`${section}`) Update Tour
+
+            if section === 'review'
+                h2.heading-secondary.ma-bt-lg= `Update ${data.tour.name}`
+                form.form.form--signup
+                    .form__group
+                        label.form__label(for='review') Write a review
+                        textarea#review.form__input(required rows='10')=`${data.review}`
+                    .form__group.ma-bt-md 
+                        label.form__label(for='rating') rating
+                        input#rating.form__input(type='number', required, min='1', max='5' step='0.1', value=`${data.rating}`)
+                    .form__group
+                        button.btn.btn--green#update-section(data-id=`${data.id}` data-section=`${section}`) Update Review
+
+            if section === 'booking'
+                h2.heading-secondary.ma-bt-lg= `Update ${data.tour.name}`
+                form.form.form--signup
+                    .form__group
+                        label.form__label(for='name') Name
+                        input#name.form__input(type='text', value=`${data.user.name}` readonly required)
+                    .form__group.ma-bt-md 
+                        label.form__label(for='price') Price
+                        input#price.form__input(type='number', required, min='1', step='1', value=`${data.price}`)
+                    .form__group.ma-bt-md 
+                        label.form__label(for='numbersOfPeople') Number of tickets
+                        input#numbersOfPeople.form__input(type='number', required, min='1', step='1', value=`${data.numbersOfPeople}`)
+                    .form__group
+                        button.btn.btn--green#update-section(data-id=`${data.id}` data-section=`${section}`) Update booking
