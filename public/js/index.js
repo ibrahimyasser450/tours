@@ -38,9 +38,7 @@ async function validateTourName(value, errorSelector, message) {
     return false;
   }
   try {
-    const res = await axios.get(
-      `http://127.0.0.1:3000/api/v1/tours/checkTourName/${value}`,
-    );
+    const res = await axios.get(`/api/v1/tours/checkTourName/${value}`);
     if (res.data.exists) {
       showError(errorElement, message); // e.g. "Tour name already exists!"
       return false;
@@ -108,9 +106,7 @@ async function validateEmailForAddSection(value, errorSelector, message) {
   }
   // check if email already exists in database or not
   try {
-    const res = await axios.get(
-      `http://127.0.0.1:3000/api/v1/users/checkEmail/${value}`,
-    );
+    const res = await axios.get(`/api/v1/users/checkEmail/${value}`);
     if (res.data.exists) {
       showError(errorElement, message);
       return false;
@@ -224,9 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   async function fetchTourDetails(tourId, tourDate) {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:3000/api/v1/tours/${tourId}`,
-      );
+      const response = await axios.get(`/api/v1/tours/${tourId}`);
 
       if (response.data.status !== 'success') throw new Error('Tour not found');
 
@@ -429,10 +423,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       icon.addEventListener('click', async function () {
         const tourId = this.dataset.tourId;
         try {
-          const response = await axios.patch(
-            'http://127.0.0.1:3000/api/v1/users/favorite-tour',
-            { tourId },
-          );
+          const response = await axios.patch('/api/v1/users/favorite-tour', {
+            tourId,
+          });
 
           const count = response.data.favoriteCount;
           favoriteCountEl.textContent = count;
@@ -504,7 +497,7 @@ if (createReview) {
     const errorMessageElement = document.getElementById('error-review');
     try {
       const response = await axios.get(
-        `http://127.0.0.1:3000/api/v1/bookings/${userId}/${tourId}/bookings`,
+        `/api/v1/bookings/${userId}/${tourId}/bookings`,
       );
 
       const isBooked = response.data.results;
@@ -917,9 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:3000/api/v1/tours/${tourId}`,
-        );
+        const response = await axios.get(`/api/v1/tours/${tourId}`);
 
         if (response.data.status !== 'success')
           throw new Error('Tour not found');

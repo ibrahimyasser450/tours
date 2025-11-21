@@ -5,7 +5,7 @@ export const login = async (email, password) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:3000/api/v1/users/login',
+      url: '/api/v1/users/login',
       data: {
         email,
         password,
@@ -27,7 +27,7 @@ export const logout = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:3000/api/v1/users/logout',
+      url: '/api/v1/users/logout',
       withCredentials: true, // Tell browser to include cookies in request if don't write it the backend won’t know who you are (so req.cookies will be undefined).
     });
 
@@ -45,7 +45,7 @@ export const deleteAccount = async () => {
   try {
     const res = await axios({
       method: 'DELETE',
-      url: 'http://127.0.0.1:3000/api/v1/users/deleteMyAccount',
+      url: '/api/v1/users/deleteMyAccount',
     });
     if ((res.data.status = 'success')) {
       showAlert('success', 'Account deleted successfully!');

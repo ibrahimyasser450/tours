@@ -154,7 +154,7 @@ exports.getMyReviews = catchAsync(async (req, res, next) => {
 
 exports.getReview = catchAsync(async (req, res, next) => {
   const review = await Review.findById(req.params.id);
-  console.log(review);
+  // console.log(review);
   res.status(200).render('updateReview', {
     title: `Review for ${review.tour.name}`,
     review,

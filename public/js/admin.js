@@ -11,15 +11,15 @@ export const createSectionByAdmin = async (data, section) => {
     let returnPage = '';
     switch (section) {
       case 'user':
-        url = 'http://127.0.0.1:3000/api/v1/users/signup';
+        url = '/api/v1/users/signup';
         returnPage = '/dashboard/users';
         break;
       case 'tour':
-        url = 'http://127.0.0.1:3000/api/v1/tours';
+        url = '/api/v1/tours';
         returnPage = '/dashboard/tours';
         break;
       case 'review':
-        url = 'http://127.0.0.1:3000/api/v1/reviews';
+        url = '/api/v1/reviews';
         returnPage = '/dashboard/reviews';
         break;
       case 'booking':
@@ -58,19 +58,19 @@ export const updateSectionByAdmin = async (data, section, id) => {
     let returnPage = '';
     switch (section) {
       case 'user':
-        url = `http://127.0.0.1:3000/api/v1/users/${id}`;
+        url = `/api/v1/users/${id}`;
         returnPage = '/dashboard/users';
         break;
       case 'tour':
-        url = `http://127.0.0.1:3000/api/v1/tours/${id}`;
+        url = `/api/v1/tours/${id}`;
         returnPage = '/dashboard/tours';
         break;
       case 'review':
-        url = `http://127.0.0.1:3000/api/v1/reviews/${id}`;
+        url = `/api/v1/reviews/${id}`;
         returnPage = '/dashboard/reviews';
         break;
       case 'booking':
-        url = `http://127.0.0.1:3000/api/v1/bookings/${id}`;
+        url = `/api/v1/bookings/${id}`;
         returnPage = '/dashboard/bookings';
         break;
       default:
@@ -100,16 +100,16 @@ export const deleteSectionByAdmin = async (id, section) => {
     let url = '';
     switch (section) {
       case 'user':
-        url = `http://127.0.0.1:3000/api/v1/users/${id}`;
+        url = `/api/v1/users/${id}`;
         break;
       case 'tour':
-        url = `http://127.0.0.1:3000/api/v1/tours/${id}`;
+        url = `/api/v1/tours/${id}`;
         break;
       case 'review':
-        url = `http://127.0.0.1:3000/api/v1/reviews/${id}`;
+        url = `/api/v1/reviews/${id}`;
         break;
       case 'booking':
-        url = `http://127.0.0.1:3000/api/v1/bookings/${id}`;
+        url = `/api/v1/bookings/${id}`;
         break;
       default:
         return;
@@ -139,7 +139,7 @@ export const bookTourForUser = async (tourId, userId, date, price) => {
   try {
     // 1) Get checkout session from API (admin endpoint)
     const session = await axios.get(
-      `http://127.0.0.1:3000/api/v1/bookings/checkout-session/${tourId}/${date}/${price}/${userId}`,
+      `/api/v1/bookings/checkout-session/${tourId}/${date}/${price}/${userId}`,
     );
 
     // 2) Redirect to Stripe Checkout
