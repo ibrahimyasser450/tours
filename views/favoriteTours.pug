@@ -2,7 +2,8 @@ extends base
 
 block content
     main.main
-        .user-hide= user
+        //- .user-hide= user
+        .user-hide= JSON.stringify(user)
         if tours.length !== 0  
             .card-container
                 each tour in tours

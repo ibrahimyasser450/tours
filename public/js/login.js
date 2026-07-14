@@ -58,3 +58,17 @@ export const deleteAccount = async () => {
     showAlert('error', 'Error deleting account! Try again.');
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const res = await axios.post('/api/v1/users/forgotPassword', {
+      email,
+    });
+
+    if (res.data.status === 'success') {
+      showAlert('success', 'Check your email');
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message); // Server response with error
+  }
+};

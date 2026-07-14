@@ -59,3 +59,34 @@ export const signup = async (name, email, password, passwordConfirm, role) => {
     }
   }
 };
+
+export const resetPassword = async (password, passwordConfirm, token) => {
+  try {
+    const res = await axios.patch(`/api/v1/users/resetPassword/${token}`, {
+      password,
+      passwordConfirm,
+    });
+
+    if (res.data.status === 'success') {
+      showAlert('success', 'Logged in successful!');
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1500);
+    }
+  } catch (err) {
+    // Clear all previous errors first
+    clearFieldError('password');
+    clearFieldError('password-confirm');
+
+    // Display the specific error messages under each field
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => {
+        showFieldError(error.field, error.message);
+      });
+    } else {
+      // Show a generic error message if no specific field error is returned
+      showAlert('error', err.response.data.message);
+    }
+  }
+};

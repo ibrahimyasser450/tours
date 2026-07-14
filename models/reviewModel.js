@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -54,9 +53,10 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
-// i want to calculate average ratings and number of ratings that we have in review for each tour
+// i want to calculate average ratings and number of ratings that we have in review for special tour
 // get all reviews for specific tour and calculate average ratings and number of ratings
 reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const Tour = mongoose.model('Tour');
   const stats = await this.aggregate([
     {
       $match: { tour: tourId },

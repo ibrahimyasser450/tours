@@ -3,7 +3,6 @@ const express = require('express');
 const {
   isLoggedIn,
   protect,
-  restrictTo,
   confirmEmail,
 } = require('./../controllers/authController');
 const {
@@ -17,6 +16,8 @@ const {
   getSignupForm,
   getConfirmEmail,
   getLoginForm,
+  getForgotPassword,
+  getResetPassword,
   getProfile,
   updateUserData,
   getAllBookings,
@@ -39,6 +40,8 @@ router.route('/').get(createBookingCheckout, isLoggedIn, getOverview);
 router.route('/tour/:slug').get(isLoggedIn, updateBooked, getTour);
 router.route('/signup').get(isLoggedIn, getSignupForm);
 router.route('/login').get(isLoggedIn, getLoginForm);
+router.get('/forgot-password', isLoggedIn, getForgotPassword);
+router.get('/resetPassword/:token', isLoggedIn, getResetPassword);
 router.route('/confirm-email').get(getConfirmEmail);
 router.route('/confirm-email/:token').get(confirmEmail);
 // must be logged in to do any of them

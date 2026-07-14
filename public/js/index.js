@@ -3,9 +3,9 @@ const validator = require('validator');
 import axios from 'axios';
 import '@babel/polyfill';
 import { showAlert } from './alerts';
-import { login, logout, deleteAccount } from './login';
+import { login, logout, deleteAccount, forgotPassword } from './login';
 import { updateSettings } from './updateSettings';
-import { signup } from './signup';
+import { signup, resetPassword } from './signup';
 import { bookTour } from './stripe';
 import { reviewTour, updateReviewTour, deleteReviewTour } from './review';
 import {
@@ -17,6 +17,8 @@ import {
 // DOM ELEMENTS
 const signupForm = document.querySelector('.form--signup');
 const loginForm = document.querySelector('.form--login');
+const forgetPasswordform = document.querySelector('.form--forgot-password');
+const resetPasswordForm = document.querySelector('.form--reset-password');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -328,6 +330,28 @@ if (logoutBtn) {
   logoutBtn.addEventListener('click', logout);
 }
 
+if (forgetPasswordform) {
+  forgetPasswordform.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+
+    forgotPassword(email);
+  });
+}
+
+if (resetPasswordForm) {
+  resetPasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('passwordConfirm').value;
+
+    const token = document.querySelector('.form--reset-password').dataset.token;
+    resetPassword(password, passwordConfirm, token);
+  });
+}
+
 if (userDataForm) {
   // Preview user photo => show user photo when selecting a photo but not saved yet in database, should submit to be saved
   document.getElementById('photo').addEventListener('change', function (event) {
@@ -388,13 +412,11 @@ if (deleteMyAccount) {
 
 // favorite tours
 document.addEventListener('DOMContentLoaded', async () => {
-  if (
-    !(
-      window.location.origin + '/' === window.location.href ||
-      window.location.pathname.includes('overview') ||
-      window.location.pathname.includes('my-favorites-tours')
-    )
-  ) {
+  if (!(
+    window.location.origin + '/' === window.location.href ||
+    window.location.pathname.includes('overview') ||
+    window.location.pathname.includes('my-favorites-tours')
+  )) {
     return;
   }
   const favoriteCountEl = document.querySelector('.nav__favorite-count');
@@ -403,11 +425,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // If user is logged in
   if (userDataText) {
     // Convert to valid JSON format
-    const validJsonText = userDataText
-      .replace(/new ObjectId\('([^']+)'\)/g, '"$1"') // Convert ObjectId to string
-      .replace(/(\w+):/g, '"$1":') // Ensure property names are quoted
-      .replace(/'/g, '"'); // Replace single quotes with double quotes
-    const userData = JSON.parse(validJsonText);
+    // const validJsonText = userDataText
+    //   .replace(/new ObjectId\('([^']+)'\)/g, '"$1"') // Convert ObjectId to string
+    //   .replace(/(\w+):/g, '"$1":') // Ensure property names are quoted
+    //   .replace(/'/g, '"'); // Replace single quotes with double quotes
+    //   const userData = JSON.parse(validJsonText);
+    const userData = JSON.parse(userDataText);
     const favoriteTours = userData.favoriteTours;
 
     // Highlight favorite tours
@@ -495,6 +518,7 @@ if (createReview) {
     const userId = event.target.dataset.userId;
     const tourSlug = event.target.dataset.tourSlug;
     const errorMessageElement = document.getElementById('error-review');
+
     try {
       const response = await axios.get(
         `/api/v1/bookings/${userId}/${tourId}/bookings`,

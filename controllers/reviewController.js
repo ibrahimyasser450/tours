@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
+// check if user already booked this tour and check if user already made review before [just one review for each booking]
 exports.checkBookedBeforeReview = catchAsync(async (req, res, next) => {
   let tourId = req.params.tourId;
   let userId = req.user.id;
@@ -51,6 +52,7 @@ exports.checkBookedBeforeReview = catchAsync(async (req, res, next) => {
   next();
 });
 
+// middleware when user want to update review must change anything [review, rating]
 exports.checkChangedReview = catchAsync(async (req, res, next) => {
   const review = await Review.findById(req.params.id);
   const oldReview = review.review;
@@ -69,6 +71,7 @@ exports.checkChangedReview = catchAsync(async (req, res, next) => {
   next();
 });
 
+// when want to create review take the tour id and current user
 exports.setTourUserIds = (req, res, next) => {
   // Allow nested routes
   if (!req.body.tour) req.body.tour = req.params.tourId;

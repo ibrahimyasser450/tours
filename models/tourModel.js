@@ -212,9 +212,10 @@ tourSchema.virtual('durationWeeks').get(function () {
 // virtual populate => get reviews for each tour without save it in Tour database
 // reviews => field name [array of reviews], Review [child] database name and tour foreign key or foreign field that have the tour id in Review database, local field that have the tour id in Tour database
 tourSchema.virtual('reviews', {
-  ref: 'Review',
-  foreignField: 'tour',
-  localField: '_id',
+  // field name
+  ref: 'Review', // database name
+  foreignField: 'tour', // foreign key that contains tour id
+  localField: '_id', // tour id
 });
 
 // document middleware pre => runs before an actual event => .save() and .create() only means that this function will run before the document save to db

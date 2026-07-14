@@ -194,6 +194,7 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
   next();
 });
 
+// highest rating, then by lowest price
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage,price';
@@ -201,6 +202,7 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
+// check if this tour found or not
 exports.checkTourName = catchAsync(async (req, res, next) => {
   const tour = await Tour.findOne({ name: req.params.name });
 
@@ -218,11 +220,13 @@ exports.createTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
+// make groups depending on special attribute useing aggregate
+// ex: i want to know how many tours difficult, medium, easy and average ratings and price for each group
 exports.getTourStats = catchAsync(async (req, res, next) => {
   try {
     const stats = await Tour.aggregate([
       {
-        $match: { ratingsAverage: { $gte: 4.5 } }, // the data that we want to get it to do some aggregation functions on it
+        $match: { ratingsAverage: { $gte: 4.5 } }, // the data that we want to get it must ratingsAverage be greater than or equal 4.5
       },
       {
         $group: {
@@ -230,7 +234,7 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
           _id: { $toUpper: '$difficulty' }, // to make groups depending on difficulty
           // _id: '$ratingsAverage', // to make groups depending on ratingsAverage
           numTours: { $sum: 1 }, // to increase the number of tours by 1 for each document in each group
-          numRatings: { $sum: '$ratingsQuantity' },
+          numRatings: { $sum: '$ratingsQuantity' }, // count to get the numbers of ratingsQuantity
           avgRating: { $avg: '$ratingsAverage' },
           avgPrice: { $avg: '$price' },
           minPrice: { $min: '$price' },
@@ -259,13 +263,21 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
   }
 });
 
+// make groups depending on startDates send special year then group each month and get nums of tours and name of them at each month at this year
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   try {
-    const year = req.params.year * 1; // 2021
+    const year = req.params.year * 1; // 2021 => convert string to number
 
     const plan = await Tour.aggregate([
       {
         $unwind: '$startDates', // to make each startDates a separate document if one document has 3 startDates then it will be 3 documents
+      },
+      {
+        $addFields: {
+          startDates: {
+            $toDate: '$startDates.date', // convert startDates.date from string to date
+          },
+        },
       },
       {
         $match: {
@@ -314,7 +326,8 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
   }
 });
 
-// i want to get all the tours that are within a certain radius from a certain location ex: get all the tours that are within 250miles from los angeles[34.111745,-118.113491]
+// i want to get all the tours that are within a certain radius from a location ex: get all the tours that are within 250miles from los angeles[34.111745,-118.113491]
+// send location and radius so get circle => i want to gwt all tours inside this circle
 // / tours-within/250/center/34.111745,-118.113491/unit/mi
 exports.getToursWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
@@ -376,8 +389,9 @@ exports.getDistances = catchAsync(async (req, res, next) => {
     {
       // to get only the name and the distance, project => select
       $project: {
-        distance: 1,
-        name: 1,
+        _id: 0, // hide and don't get it
+        distance: 1, // show and get distanse if 0 hide and don't get it
+        name: 1, // show and get distanse if 0 hide and don't get it
       },
     },
   ]);

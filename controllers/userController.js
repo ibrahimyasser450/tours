@@ -2,6 +2,8 @@ const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/userModel');
 const Tour = require('../models/tourModel');
+const Booking = require('./../models/bookingModel');
+const Review = require('./../models/reviewModel');
 const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -58,6 +60,7 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
+// to get some attributes when user want to update profile
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -68,11 +71,13 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+//get current user
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
 
+// update user profile
 exports.updateProfile = catchAsync(async (req, res, next) => {
   // console.log(req.file);
   // when we use multer or need to upload files we need to use req.file because req.body not able to get the file
@@ -86,6 +91,7 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
     );
   }
   // we need to keep only name and email, the user not allowed to change role or token or expire date for token
+  // only can change name, email, and picture
   const filteredBody = filterObj(req.body, 'name', 'email');
   // append photo to filteredBody if use req.file through using form-data
   if (req.file) filteredBody.photo = req.file.filename;
@@ -105,8 +111,21 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
 });
 
 // we effectively not deleting them from the database, we are only marking them as inactive
-// this delete for the user logged in
+// this delete account for the user logged in[current user]
 exports.deleteMyAccount = catchAsync(async (req, res, next) => {
+  await Booking.deleteMany({ user: req.user.id });
+  await Review.deleteMany({ user: req.user.id });
+  await Tour.updateMany(
+    {},
+    {
+      // $pull = Remove matching items from an array
+      $pull: {
+        guides: {
+          user: req.user.id,
+        },
+      },
+    },
+  );
   await User.findByIdAndUpdate(req.user.id, {
     accountActive: false,
     active: false,
@@ -130,6 +149,7 @@ exports.createUser = (req, res) => {
   });
 };
 
+// if user exists or not
 exports.checkEmail = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.params.email });
 
@@ -139,6 +159,7 @@ exports.checkEmail = catchAsync(async (req, res, next) => {
   });
 });
 
+// when user click on heart icon of any tour so add or remove from favoriteTours array
 exports.favoriteTour = catchAsync(async (req, res, next) => {
   // add to favoriteTours array
   const user = await User.findById(req.user.id);

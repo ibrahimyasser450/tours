@@ -19,6 +19,7 @@ const {
   login,
   logout,
   protect,
+  validateResetPassword,
   forgotPassword,
   resetPassword,
   updatePassword,
@@ -31,7 +32,9 @@ router.route('/signup').post(validateSignup, signup);
 router.route('/login').post(login);
 router.route('/logout').get(logout);
 router.route('/forgotPassword').post(forgotPassword);
-router.route('/resetPassword/:token').patch(resetPassword);
+router
+  .route('/resetPassword/:token')
+  .patch(validateResetPassword, resetPassword);
 
 // Protect all routes after this middleware if the user is protected can access any route after this , ex: if i want to run update password it will run first protect middleware then update password
 router.use(protect);

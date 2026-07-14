@@ -75,7 +75,10 @@ block content
     section.section-reviews
         h2= `create review for ${tour.name}`
         p#error-review 
-        a.btn.btn--green#btn--review(data-tour-id=`${tour.id}` data-user-id=`${user.id}` data-tour-slug=`${tour.slug}`) create review 
+        if user
+            a.btn.btn--green#btn--review(data-tour-id=`${tour.id}` data-user-id=`${user.id}` data-tour-slug=`${tour.slug}`) create review 
+        else 
+            a.btn.btn--green#btn--review-login(href="/login") Log in to Create Review
         .reviews
             each review in tour.reviews
                 +overviewCard(review)

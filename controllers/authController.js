@@ -18,6 +18,7 @@ const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
   // jwt => variable, token => value, httpOnly => true means cannot access or modify in any way by the browser [client side], secure => true means https and only send on encrypted connection like https
+
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
@@ -221,7 +222,7 @@ exports.logout = async (req, res, next) => {
     }
 
     res.cookie('jwt', 'loggedout', {
-      expires: new Date(Date.now() + 10 * 1000),
+      expires: new Date(Date.now() + 10 * 1000), // expired after 10 seconds
       httpOnly: true,
     });
 
@@ -231,6 +232,7 @@ exports.logout = async (req, res, next) => {
   }
 };
 
+// authentication
 exports.protect = catchAsync(async (req, res, next) => {
   // console.log('🔴 Protect Middleware Called', req.originalUrl);
   // 1) Getting token and check if it's there
@@ -281,7 +283,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   res.locals.user = currentUser;
   next();
 });
-
+// check if loggedin get
 exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
@@ -304,6 +306,7 @@ exports.isLoggedIn = async (req, res, next) => {
 
       // there is a logged in user
       // res.locals => make global variable called user in each pug template
+      req.user = currentUser;
       res.locals.user = currentUser;
       return next();
     } catch (err) {
@@ -313,6 +316,7 @@ exports.isLoggedIn = async (req, res, next) => {
   next();
 };
 
+// authorizaion
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -322,6 +326,39 @@ exports.restrictTo = (...roles) => {
     }
     next();
   };
+};
+
+exports.validateResetPassword = async (req, res, next) => {
+  const { password, passwordConfirm } = req.body;
+  const errors = [];
+
+  if (!password || password.trim() === '') {
+    errors.push({ field: 'password', message: 'Password is required.' });
+  } else if (!validator.isStrongPassword(password)) {
+    errors.push({
+      field: 'password',
+      message:
+        'Password must be strong. Please include at least 8 characters, one uppercase, one lowercase, one number, and one special character.',
+    });
+  }
+  if (!passwordConfirm || passwordConfirm.trim() === '') {
+    errors.push({
+      field: 'password-confirm',
+      message: 'Password confirmation is required.',
+    });
+  }
+  if (password !== passwordConfirm) {
+    errors.push({
+      field: 'password-confirm',
+      message: 'Passwords do not match.',
+    });
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
+  }
+
+  next();
 };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
@@ -340,7 +377,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   try {
     const resetURL = `${req.protocol}://${req.get(
       'host',
-    )}/api/v1/users/resetPassword/${resetToken}`;
+    )}/resetPassword/${resetToken}`;
     await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
@@ -385,7 +422,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user, passwordChangedAt will be smaller one second then token creation time.
   // 4) Log the user in, send JWT
-  createSendToken(user, 200, req, res);
+  createSendToken(user, 200, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {

@@ -76,7 +76,7 @@ const userSchema = new mongoose.Schema({
   favoriteTours: [{ type: mongoose.Schema.ObjectId, ref: 'Tour' }], // Store tour IDs
 });
 
-// Only run this function if password was actually modified
+// Only run this function if password was actually modified [update password]
 userSchema.pre('save', async function (next) {
   // if password is not modified
   if (!this.isModified('password')) return next();
@@ -90,6 +90,7 @@ userSchema.pre('save', async function (next) {
 userSchema.pre('save', function (next) {
   // if password is not modified or the document is new
   if (!this.isModified('password') || this.isNew) return next();
+  // if password modified save when changed
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
@@ -100,7 +101,7 @@ userSchema.pre('save', function (next) {
 // });
 
 userSchema.pre(/^find/, function (next) {
-  // return all users that are active
+  // return all users that are active account means not deleted
   this.find({ accountActive: { $ne: false } });
   next();
 });
@@ -122,6 +123,7 @@ userSchema.methods.correctPassword = async function (
 };
 
 // Check if password was changed after the token was issued so that user can't use old token so the user should log in again
+// if user updated password he should to login again with new password to take new token
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
@@ -142,6 +144,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
+
   // expire the token in 10 minutes
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;

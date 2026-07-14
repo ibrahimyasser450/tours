@@ -2,6 +2,8 @@
 const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const Booking = require('./../models/bookingModel');
+const Review = require('./../models/reviewModel');
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -19,20 +21,28 @@ exports.deleteOne = (Model) =>
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     // runValidators: true will check if the data is valid like checking if price is number, name is string and rating is double
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true, // to do all validations in tourSchema like when create new tour
-    });
+    try {
+      const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+      });
 
-    if (!doc) {
-      return next(new AppError('No document found with that ID', 404));
+      console.log(doc);
+
+      if (!doc) {
+        return next(new AppError('No document found with that ID', 404));
+      }
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          data: doc,
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      throw err;
     }
-    res.status(200).json({
-      status: 'success',
-      data: {
-        data: doc,
-      },
-    });
   });
 
 exports.createOne = (Model) =>

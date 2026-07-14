@@ -1619,6 +1619,13 @@ body {
   margin-top: 2rem;
 }
 
+.btn-forget-password {
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
 .section-reviews h2 {
   font-size: 2.5rem;
   font-weight: 700;
@@ -1629,7 +1636,8 @@ body {
   text-align: center;
 }
 
-#btn--review {
+#btn--review,
+#btn--review-login {
   display: block;
   width: fit-content;
   background-color: #28b487;

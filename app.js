@@ -132,6 +132,11 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/', viewRouter);
+
+app.get('/bundle.js.map', (req, res) => {
+  res.sendStatus(204);
+});
+
 // if the route is not found then this middleware will be executed, means if the route is not found on tourRouter or userRouter then this middleware will be executed
 // when a user writes url that does not exist.
 app.all('*', (req, res, next) => {

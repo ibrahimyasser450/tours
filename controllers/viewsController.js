@@ -40,7 +40,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
 exports.getSignupForm = (req, res) => {
   // console.log(req.cookies.jwt);
   // meaning user is already signed up and we don't want to show signup form  because user already have account
-  if (!(req.cookies.jwt === 'loggedout' || req.cookies.jwt === undefined)) {
+  if (req.user) {
     return res.redirect('/');
   }
   res.status(200).render('signup', {
@@ -56,12 +56,32 @@ exports.getConfirmEmail = (req, res) => {
 
 exports.getLoginForm = (req, res) => {
   // meaning user is already logged in and we don't want to show login form
-  // when cookies.jwt expires meaning equal undefined
-  if (!(req.cookies.jwt === 'loggedout' || req.cookies.jwt === undefined)) {
+  if (req.user) {
     return res.redirect('/');
   }
   res.status(200).render('login', {
     title: 'Log into your account',
+  });
+};
+
+exports.getForgotPassword = (req, res) => {
+  // meaning user is already loggedin and we don't want to show forgot password page
+  if (req.user) {
+    return res.redirect('/');
+  }
+  res.status(200).render('forgotPassword', {
+    title: 'Forgot Password',
+  });
+};
+
+exports.getResetPassword = (req, res) => {
+  if (req.user) {
+    return res.redirect('/');
+  }
+  res.clearCookie('jwt');
+  res.status(200).render('resetPassword', {
+    title: 'Reset Password',
+    token: req.params.token,
   });
 };
 

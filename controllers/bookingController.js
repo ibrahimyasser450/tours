@@ -7,10 +7,12 @@ const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
+// when do booking and choose date like 14-06-2026 and current date is 13-07-2026 so the date that choosed it at past so i need to book the next year so the date saved like 14-06-2027 because currentDate.getMonth() > originalDate.getMonth() [ by months]
+// ex (2): when do booking and choose date like 10-07-2026 and current date is 13-07-2026 so the date that choosed it at past so i need to book the next year so the date saved like 10-07-2027 because currentDate.getDate() > originalDate.getDate() [by days]
 const createNewDate = (date) => {
   let originalDate = new Date(date); // 2023-01-01T00:00:00.000Z as date type because guides.dates is array of date type
   let currentDate = new Date(); // Current date
-  let currentYear = new Date().getFullYear(); // 2025
+  let currentYear = new Date().getFullYear(); // 2026
   // const updatedDate = originalDate.toISOString();  // as string type
 
   if (
@@ -25,7 +27,8 @@ const createNewDate = (date) => {
   return originalDate;
 };
 
-// it should be before open the tour page to clear the past dates to make sure the user can book the same date on next year but if use this middleware when do booking don't work because index.js will print There are no tickets available. Sold Out! because i am trying to clear past dates after booking step so it should be when open the tour page
+// it should be before open the tour page to clear the past dates to make sure the user can book the same date on next year but if use this as middleware when do booking don't work because index.js will print There are no tickets available. Sold Out! because i am trying to clear past dates after booking step so it should be when open the tour page
+// when delete the past dates so if found soldOut ture replace it to false and decrease number of booked persons that deleted
 exports.updateBooked = catchAsync(async (req, res, next) => {
   // 1) Get the currently booked tour
   const tour = await Tour.findOne({ slug: req.params.slug });
@@ -76,6 +79,7 @@ exports.updateBooked = catchAsync(async (req, res, next) => {
   next();
 });
 
+// check if this user already booked this tour at same time
 exports.checkBooking = catchAsync(async (req, res, next) => {
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
@@ -99,6 +103,7 @@ exports.checkBooking = catchAsync(async (req, res, next) => {
   if (guideEntry) {
     if (guideEntry.bookings.some((b) => b.date.getTime() === newDate.getTime()))
       if (req.params.userId) {
+        // if admin trying to book special tour for special user
         return next(
           new AppError(
             `${currentUser.name} has already booked this tour on ${newDate.toLocaleString('en-us', { day: 'numeric', month: 'long' })}`,
@@ -106,6 +111,7 @@ exports.checkBooking = catchAsync(async (req, res, next) => {
           ),
         );
       } else {
+        // if user trying to book tour
         return next(
           new AppError(
             `You have already booked this tour on ${newDate.toLocaleString('en-us', { day: 'numeric', month: 'long' })}`,
@@ -119,6 +125,7 @@ exports.checkBooking = catchAsync(async (req, res, next) => {
   next();
 });
 
+// if user want to booking tour
 exports.getCheckoutSession = async (req, res) => {
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
@@ -162,6 +169,7 @@ exports.getCheckoutSession = async (req, res) => {
   });
 };
 
+// if admin want to booking special tour for special user
 exports.getCheckoutSessionForAdmin = async (req, res) => {
   // 1) Get the currently booked tour
   const tour = await Tour.findById(req.params.tourId);
@@ -209,6 +217,7 @@ exports.getCheckoutSessionForAdmin = async (req, res) => {
   });
 };
 
+// update the tour that booked and create booking at DB
 exports.createBookingCheckout = async (req, res, next) => {
   // This is only TEMPORARY, because it's UNSECURE: everyone can make bookings without paying
   // tour is meaning tour id and user also meaning user id

@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
 
+// create review for special tour
 export const reviewTour = async function (tourId, review, rating) {
   try {
     const res = await axios({
