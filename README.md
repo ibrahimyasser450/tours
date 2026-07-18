@@ -278,5 +278,3 @@ Authorization: Bearer <token>
 Software Engineer
 
 GitHub: https://github.com/ibrahimyasser450
-
-LinkedIn: 
