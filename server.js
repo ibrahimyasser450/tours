@@ -15,8 +15,13 @@ const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD,
 );
-mongoose.connect(DB).then(() => console.log('DB connection successful!'));
 
+mongoose
+  .connect(DB, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('DB connection successful!'))
+  .catch((err) => {
+    console.error('MongoDB connection failed:', err.message);
+  });
 const port = process.env.PORT || 3000;
 
 if (process.env.NODE_ENV !== 'production') {
