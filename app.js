@@ -23,10 +23,7 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
-console.log('===== VERCEL DEBUG =====');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('DATABASE exists:', !!process.env.DATABASE);
-console.log('========================');
+console.log('🔵 APP.JS LOADED');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
