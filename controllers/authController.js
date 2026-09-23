@@ -221,9 +221,6 @@ exports.logout = async (req, res, next) => {
       });
     }
 
-    // Prevent caching of logout response
-    res.set('Cache-Control', 'no-store');
-
     res.cookie('jwt', 'loggedout', {
       expires: new Date(0),
       httpOnly: true,

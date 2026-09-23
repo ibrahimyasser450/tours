@@ -30,7 +30,7 @@ const bookingRouter = require('./bookingRoutes');
 const router = express.Router();
 router.route('/signup').post(validateSignup, signup);
 router.route('/login').post(login);
-router.route('/logout').get(logout);
+router.route('/logout').post(logout);
 router.route('/forgotPassword').post(forgotPassword);
 router
   .route('/resetPassword/:token')
