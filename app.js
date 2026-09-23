@@ -26,6 +26,8 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
+app.set('trust proxy', 1);
+
 // ✅ Enable CORS for API and views (Allow both frontend and backend running on different origins)
 app.use(
   cors({
