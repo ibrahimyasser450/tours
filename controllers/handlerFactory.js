@@ -4,10 +4,43 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const Booking = require('./../models/bookingModel');
 const Review = require('./../models/reviewModel');
+const Tour = require('./../models/tourModel');
+const User = require('./../models/userModel');
 
 exports.deleteOne = (Model) =>
+  // when admin delete user or tour we need to delete all bookings and reviews related them also remove the user from guides array in tours and remove the tour from favoriteTour array in users.
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndDelete(req.params.id);
+    let doc;
+    if (Model === 'User') {
+      await Booking.deleteMany({ user: req.params.id });
+      await Review.deleteMany({ user: req.params.id });
+      await Tour.updateMany(
+        {},
+        {
+          // $pull = Remove matching items from an array
+          $pull: {
+            guides: {
+              user: req.params.id,
+            },
+          },
+        },
+      );
+      doc = await User.findByIdAndUpdate(req.params.id);
+    } else if (Model === 'Tour') {
+      await Booking.deleteMany({ tour: req.params.id });
+      await Review.deleteMany({ tour: req.params.id });
+      await User.updateMany(
+        {},
+        {
+          $pull: {
+            favoriteTour: req.params.id,
+          },
+        },
+      );
+      doc = await Tour.findByIdAndDelete(req.params.id);
+    } else {
+      doc = await Model.findByIdAndDelete(req.params.id);
+    }
 
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
