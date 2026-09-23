@@ -31,7 +31,7 @@ export const logout = async () => {
       withCredentials: true, // Tell browser to include cookies in request if don't write it the backend won’t know who you are (so req.cookies will be undefined).
     });
 
-    if ((res.data.status = 'success')) {
+    if (res.data.status === 'success') {
       location.assign('/');
       // location.reload(true);
     }
@@ -47,7 +47,7 @@ export const deleteAccount = async () => {
       method: 'DELETE',
       url: '/api/v1/users/deleteMyAccount',
     });
-    if ((res.data.status = 'success')) {
+    if (res.data.status === 'success') {
       showAlert('success', 'Account deleted successfully!');
       window.setTimeout(() => {
         location.assign('/');

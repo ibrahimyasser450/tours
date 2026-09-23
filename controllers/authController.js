@@ -202,9 +202,6 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
   try {
-    console.log('🔥 LOGOUT CONTROLLER REACHED');
-    console.log('Has JWT:', !!req.cookies.jwt);
-    console.log('Token:', req.cookies.jwt ? 'EXISTS' : 'MISSING');
     let userId;
     const token = req.cookies.jwt;
 
@@ -218,12 +215,10 @@ exports.logout = async (req, res, next) => {
     }
 
     if (userId) {
-      console.log('Updating user:', userId);
       await User.findByIdAndUpdate(userId, {
         active: false,
         lastActiveAt: Date.now(),
       });
-      console.log('User updated');
     }
 
     res.cookie('jwt', 'loggedout', {
@@ -231,7 +226,6 @@ exports.logout = async (req, res, next) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
     });
-    console.log('🍪 Logout cookie sent');
     res.status(200).json({ status: 'success' });
   } catch (err) {
     return next(new AppError('Error logging out. Please try again.', 500));
