@@ -8,17 +8,21 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Ibrahim Yasser <${process.env.EMAIL_FROM}>`;
+    if (process.env.NODE_ENV === 'production') {
+      this.from = `Natours <${process.env.GMAIL_USERNAME}>`;
+    } else {
+      this.from = `Ibrahim Yasser <${process.env.EMAIL_FROM}>`;
+    }
   }
 
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
-      // Sendgrid
+      // Gmail
       return nodemailer.createTransport({
-        service: 'SendGrid',
+        service: 'gmail',
         auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
+          user: process.env.GMAIL_USERNAME,
+          pass: process.env.GMAIL_PASSWORD,
         },
       });
     }

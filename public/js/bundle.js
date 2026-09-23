@@ -10689,6 +10689,7 @@ var _alerts = require("./alerts");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 /* eslint-disable */
 
+// create review for special tour
 const reviewTour = async function (tourId, review, rating) {
   try {
     const res = await (0, _axios.default)({
@@ -11854,7 +11855,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54593" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51539" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
