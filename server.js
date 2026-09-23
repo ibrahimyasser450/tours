@@ -1,3 +1,4 @@
+console.log('🔥🔥🔥 SERVER.JS LOADED 🔥🔥🔥');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const dns = require('dns');
