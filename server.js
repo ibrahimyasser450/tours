@@ -1,4 +1,3 @@
-console.log('🔥🔥🔥 SERVER.JS LOADED 🔥🔥🔥');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const dns = require('dns');
@@ -8,25 +7,13 @@ dns.setServers(['8.8.8.8', '8.8.4.4']);
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
-console.log('🟢 SERVER.JS START');
-
-console.log('DATABASE exists:', !!process.env.DATABASE);
-
-console.log('🟡 BEFORE MONGOOSE CONNECT');
-
-const dbConnection = mongoose.connect(process.env.DATABASE, {
-  serverSelectionTimeoutMS: 5000,
-});
-
-console.log('🟡 AFTER MONGOOSE CONNECT');
-
-dbConnection
-  .then(() => {
-    console.log('✅ DB CONNECTION SUCCESSFUL');
-  })
+mongoose
+  .connect(process.env.DATABASE)
+  .then(() => console.log('DB connection successful!'))
   .catch((err) => {
-    console.error('❌ DB CONNECTION FAILED:', err.message);
+    console.error('MongoDB connection failed:', err.message);
   });
+
 const port = process.env.PORT || 3000;
 
 if (process.env.NODE_ENV !== 'production') {

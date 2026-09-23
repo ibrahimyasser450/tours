@@ -23,8 +23,6 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
-console.log('🔵 APP.JS LOADED');
-
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
