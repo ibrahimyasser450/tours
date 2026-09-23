@@ -11,7 +11,7 @@ exports.deleteOne = (Model) =>
   // when admin delete user or tour we need to delete all bookings and reviews related them also remove the user from guides array in tours and remove the tour from favoriteTour array in users.
   catchAsync(async (req, res, next) => {
     let doc;
-    if (Model === 'User') {
+    if (Model === User) {
       await Booking.deleteMany({ user: req.params.id });
       await Review.deleteMany({ user: req.params.id });
       await Tour.updateMany(
@@ -25,8 +25,8 @@ exports.deleteOne = (Model) =>
           },
         },
       );
-      doc = await User.findByIdAndUpdate(req.params.id);
-    } else if (Model === 'Tour') {
+      doc = await Model.findByIdAndDelete(req.params.id);
+    } else if (Model === Tour) {
       await Booking.deleteMany({ tour: req.params.id });
       await Review.deleteMany({ tour: req.params.id });
       await User.updateMany(
